@@ -42,15 +42,16 @@ public class ReadModifyWriteRecord extends Procedure {
 
         // Fetch it!
         try (PreparedStatement stmt = this.getPreparedStatement(conn, selectStmt)) {
-            stmt.setInt(1, keyname);
-            try (ResultSet r = stmt.executeQuery()) {
-                while (r.next()) {
-                    for (int i = 0; i < YCSBConstants.NUM_FIELDS; i++) {
-                        results[i] = r.getString(i + 1);
+            if (stmt != null) {
+                stmt.setInt(1, keyname);
+                try (ResultSet r = stmt.executeQuery()) {
+                    while (r.next()) {
+                        for (int i = 0; i < YCSBConstants.NUM_FIELDS; i++) {
+                            results[i] = r.getString(i + 1);
+                        }
                     }
                 }
             }
-
         }
 
         // Update that mofo

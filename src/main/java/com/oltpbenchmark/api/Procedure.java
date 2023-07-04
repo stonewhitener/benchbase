@@ -86,8 +86,10 @@ public abstract class Procedure {
      */
     public final PreparedStatement getPreparedStatement(Connection conn, SQLStmt stmt, Object... params) throws SQLException {
         PreparedStatement pStmt = this.getPreparedStatementReturnKeys(conn, stmt, null);
-        for (int i = 0; i < params.length; i++) {
-            pStmt.setObject(i + 1, params[i]);
+        if (pStmt != null) {
+            for (int i = 0; i < params.length; i++) {
+                pStmt.setObject(i + 1, params[i]);
+            }
         }
         return (pStmt);
     }
@@ -104,6 +106,9 @@ public abstract class Procedure {
      * @throws SQLException
      */
     public final PreparedStatement getPreparedStatementReturnKeys(Connection conn, SQLStmt stmt, int[] is) throws SQLException {
+        if (stmt.getSQL().trim().equals("")) {
+            return null;
+        }
 
         PreparedStatement pStmt = null;
 
@@ -145,10 +150,10 @@ public abstract class Procedure {
 
 
             SQLStmt stmt = this.name_stmt_xref.get(stmtName);
-            if (LOG.isDebugEnabled()) {
+//            if (LOG.isDebugEnabled()) {
                 LOG.debug(String.format("Setting %s SQL dialect for %s.%s",
                         dialects.getDatabaseType(), this.procName, stmtName));
-            }
+//            }
             if (stmt == null) {
                 throw new RuntimeException(String.format("Dialect file contains an unknown statement: Procedure %s, Statement %s", this.procName, stmtName));
             }
